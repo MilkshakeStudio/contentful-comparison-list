@@ -1,0 +1,8 @@
+{
+  "id": "contentful-comparison-list",
+  "name": "contentful-comparison-list",
+  "srcdoc": "./build/index.html",
+  "fieldTypes": [
+    "Object"
+  ]
+}
