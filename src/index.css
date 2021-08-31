@@ -7,4 +7,80 @@ div {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
+  overflow: hidden;
+}
+
+.list {
+  display: grid;
+  grid-template-rows: auto;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.list-item-wrapper {
+  display: grid;
+  grid-template: auto auto auto / auto 1fr 1fr;
+  grid-template-areas: 
+    "drg-ico  txt       txt"
+    "drg-ico  vwl-opt   com-opt"
+    "drg-ico  .         btn-rmv";
+  gap: 0.5rem;
+}
+
+.drag-icon {
+  grid-area: drg-ico;
+  align-self: center;
+}
+
+.textarea {
+  grid-area: txt;
+}
+
+.vowel-options {
+  grid-area: vwl-opt;
+}
+
+.competitor-options {
+  grid-area: com-opt;
+}
+
+.btn-remove-wrapper {
+  grid-area: btn-rmv;
+  justify-self: end;
+}
+
+.radio-wrapper {
+  display: grid;
+  grid-template: auto 1fr 1fr / 1fr 1fr;
+  grid-template-areas:
+    "txt  txt"
+    "yes  stm"
+    "no   qst";
+}
+
+.radio-txt {
+  grid-area: txt;
+}
+
+.radio-yes {
+  grid-area: yes;
+}
+
+.radio-no {
+  grid-area: no;
+}
+
+.radio-stm {
+  grid-area: stm;
+}
+
+.radio-qst {
+  grid-area: qst;
+}
+
+.btn-add-wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
 }

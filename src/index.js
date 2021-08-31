@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { arrayMoveImmutable } from 'array-move';
 import { v4 } from 'uuid';
-import { Card, TextField, RadioButtonField, FormLabel, Button } from '@contentful/forma-36-react-components';
+import { Card, TextField, RadioButtonField, FormLabel, Button, Icon, Textarea } from '@contentful/forma-36-react-components';
 import { init } from 'contentful-ui-extensions-sdk';
 import '@contentful/forma-36-react-components/dist/styles.css';
 import './index.css';
@@ -74,7 +76,7 @@ export const App = ({sdk}) => {
           ...prevState.listArr,
           {
             id: v4(),
-            text: "hi there",
+            text: "",
             vowel: "yes",
             competitor: "no"
           }
@@ -99,116 +101,153 @@ export const App = ({sdk}) => {
     sdk.field.setValue(listItems)
   }
 
+  const handleDragEnd = (result) => {
+    const oldList = listItems.listArr.slice()
+    const newList = arrayMoveImmutable(oldList, result.source.index, result.destination.index)
+    setListItems( prevState => (
+      {
+        ...prevState,
+        listArr: newList
+      }
+    ))
+    sdk.field.setValue(listItems)
+  }
+
 
   //===============================================================/
   //  SORTABLE COMPONENT
   //===============================================================/
 
-  const sortableItem = (item) => {
+  const sortableItem = (item, i) => {
     return (
-      <li 
+      <Draggable
+        draggableId={item.id}
+        index={i}
         key={item.id}
-        id={item.id}
       >
-        <Card>
-          <TextField
-            labelText="Text:"
-            // name="text"
-            name={`text-${item.id}`}
+        {(provided) => (
+          <li 
+            key={item.id}
             id={item.id}
-            value={item.text}
-            onChange={(e) => handleChange(e)}
-          />
-          <Card>
-            <FormLabel htmlFor="vowel">Vowel:</FormLabel>
-            <RadioButtonField
-              // name="vowelOptions"
-              name={`vowelOptions-${item.id}`}
-              id={item.id}
-              labelText="Yes"
-              value="yes"
-              checked={item.vowel === "yes"}
-              onChange={(e) => handleChange(e)}
-            />
-            <RadioButtonField
-              // name="vowelOptions"
-              name={`vowelOptions-${item.id}`}
-              id={item.id}
-              labelText="No"
-              value="no"
-              checked={item.vowel === "no"}
-              onChange={(e) => handleChange(e)}
-            />
-            <RadioButtonField
-              // name="vowelOptions"
-              name={`vowelOptions-${item.id}`}
-              id={item.id}
-              labelText="Sometimes"
-              value="sometimes"
-              checked={item.vowel === "sometimes"}
-              onChange={(e) => handleChange(e)}
-            />
-            <RadioButtonField
-              // name="vowelOptions"
-              name={`vowelOptions-${item.id}`}
-              id={item.id}
-              labelText="Question"
-              value="question"
-              checked={item.vowel === "question"}
-              onChange={(e) => handleChange(e)}
-            />
-          </Card>
-          <Card>
-            <FormLabel htmlFor="competitor">Competitor:</FormLabel>
-            <RadioButtonField
-              // name="competitorOptions"
-              name={`competitorOptions-${item.id}`}
-              id={item.id}
-              labelText="Yes"
-              value="yes"
-              checked={item.competitor === "yes"}
-              onChange={(e) => handleChange(e)}
-            />
-            <RadioButtonField
-              // name="competitorOptions"
-              name={`competitorOptions-${item.id}`}
-              id={item.id}
-              labelText="No"
-              value="no"
-              checked={item.competitor === "no"}
-              onChange={(e) => handleChange(e)}
-            />
-            <RadioButtonField
-              // name="competitorOptions"
-              name={`competitorOptions-${item.id}`}
-              id={item.id}
-              labelText="Sometimes"
-              value="sometimes"
-              checked={item.competitor === "sometimes"}
-              onChange={(e) => handleChange(e)}
-            />
-            <RadioButtonField
-              // name="competitorOptions"
-              name={`competitorOptions-${item.id}`}
-              id={item.id}
-              labelText="Question"
-              value="question"
-              checked={item.competitor === "question"}
-              onChange={(e) => handleChange(e)}
-            />
-          </Card>
-          <div>
-            <Button
-              buttonType="negative"
-              size="small"
-              icon="HorizontalRule"
-              id={item.id}
-              onClick={(e) => handleDeleteItem(e)}
-              className="btn-remove"
-            ></Button>
-          </div>
-        </Card>
-      </li>
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            <Card
+              className="list-item-wrapper"
+            >
+              <div className="drag-icon">
+                <Icon icon="Drag" />
+              </div>
+              <div className="list-item textarea">
+                <FormLabel htmlFor={`text-${item.id}`}>#{i + 1}</FormLabel>
+                <Textarea
+                  name={`text-${item.id}`}
+                  id={item.id}
+                  value={item.text}
+                  placeholder="what do you want to compare?"
+                  rows={2}
+                  onChange={(e) => handleChange(e)}
+                />
+              </div>
+              <Card className="list-item vowel-options radio-wrapper">
+                <FormLabel
+                  htmlFor="vowel"
+                  className="radio-txt"
+                >Vowel:</FormLabel>
+                <RadioButtonField
+                  name={`vowelOptions-${item.id}`}
+                  id={item.id}
+                  labelText="Yes"
+                  value="yes"
+                  checked={item.vowel === "yes"}
+                  onChange={(e) => handleChange(e)}
+                  className="radio-yes"
+                />
+                <RadioButtonField
+                  name={`vowelOptions-${item.id}`}
+                  id={item.id}
+                  labelText="No"
+                  value="no"
+                  checked={item.vowel === "no"}
+                  onChange={(e) => handleChange(e)}
+                  className="radio-no"
+                />
+                <RadioButtonField
+                  name={`vowelOptions-${item.id}`}
+                  id={item.id}
+                  labelText="Sometimes"
+                  value="sometimes"
+                  checked={item.vowel === "sometimes"}
+                  onChange={(e) => handleChange(e)}
+                  className="radio-stm"
+                />
+                <RadioButtonField
+                  name={`vowelOptions-${item.id}`}
+                  id={item.id}
+                  labelText="Question"
+                  value="question"
+                  checked={item.vowel === "question"}
+                  onChange={(e) => handleChange(e)}
+                  className="radio-qst"
+                />
+              </Card>
+              <Card className="list-item competitor-options radio-wrapper">
+                <FormLabel
+                  htmlFor="competitor"
+                  className="radio-txt"  
+                >Competitor:</FormLabel>
+                <RadioButtonField
+                  name={`competitorOptions-${item.id}`}
+                  id={item.id}
+                  labelText="Yes"
+                  value="yes"
+                  checked={item.competitor === "yes"}
+                  onChange={(e) => handleChange(e)}
+                  className="radio-yes"
+                />
+                <RadioButtonField
+                  name={`competitorOptions-${item.id}`}
+                  id={item.id}
+                  labelText="No"
+                  value="no"
+                  checked={item.competitor === "no"}
+                  onChange={(e) => handleChange(e)}
+                  className="radio-no"
+                />
+                <RadioButtonField
+                  name={`competitorOptions-${item.id}`}
+                  id={item.id}
+                  labelText="Sometimes"
+                  value="sometimes"
+                  checked={item.competitor === "sometimes"}
+                  onChange={(e) => handleChange(e)}
+                  className="radio-stm"
+                />
+                <RadioButtonField
+                  name={`competitorOptions-${item.id}`}
+                  id={item.id}
+                  labelText="Question"
+                  value="question"
+                  checked={item.competitor === "question"}
+                  onChange={(e) => handleChange(e)}
+                  className="radio-qst"
+                />
+              </Card>
+              <div className="list-item btn-remove-wrapper">
+                <Button
+                  buttonType="negative"
+                  size="small"
+                  icon="HorizontalRule"
+                  id={item.id}
+                  onClick={(e) => handleDeleteItem(e)}
+                  className="btn-remove"
+                ></Button>
+              </div>
+            </Card>
+          </li>
+        )}
+      </Draggable>
     )
   }
 
@@ -218,19 +257,31 @@ export const App = ({sdk}) => {
   //===============================================================/
 
   return (
-    <>
-      <ul>
-        {listItems.listArr.map( (item) => sortableItem(item) )}
-      </ul>
-      <div>
+    <DragDropContext
+      onDragEnd={handleDragEnd}
+    >
+      <Droppable droppableId="comparison-list-droppable">
+        {(provided) => (
+          <ul
+            className="list"
+            ref={provided.innerRef}
+            { ...provided.droppableProps}
+          >
+            {listItems.listArr.map((item, i) => sortableItem(item, i))}
+            {provided.placeholder}
+          </ul>
+        )}
+      </Droppable>
+      <div className="btn-add-wrapper">
         <Button
           buttonType="positive"
           size="small"
           icon="Plus"
           onClick={handleAddItem}
+          className="btn-add"
         >add row</Button>
       </div>
-    </>
+    </DragDropContext>
   );
 }
 
