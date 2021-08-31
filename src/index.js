@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { arrayMoveImmutable } from 'array-move';
 import { v4 } from 'uuid';
-import { Card, RadioButtonField, FormLabel, Button, Icon, Textarea } from '@contentful/forma-36-react-components';
+import { Card, FormLabel, Button, Icon, TextInput, SelectField, Option } from '@contentful/forma-36-react-components';
 import { init } from 'contentful-ui-extensions-sdk';
 import '@contentful/forma-36-react-components/dist/styles.css';
 import './index.css';
@@ -15,16 +15,7 @@ export const App = ({sdk}) => {
   //  CONTENT STATE
   //===============================================================/
 
-  const [listItems, setListItems] = useState( sdk.field.getValue() || {
-    listArr: [
-      {
-        id: v4(),
-        content: "hi there",
-        vowelOption: "yes",
-        competitorOption: "no"
-      }
-    ]
-  });
+  const [listItems, setListItems] = useState( sdk.field.getValue() );
 
 
   //===============================================================/
@@ -32,7 +23,7 @@ export const App = ({sdk}) => {
   //===============================================================/
 
   // const onExternalChange = value => {
-  //   setValue(value);
+  //   setListItems(value);
   // }
 
   const handleChange = (e) => {
@@ -141,99 +132,38 @@ export const App = ({sdk}) => {
               </div>
               <div className="list-item textarea">
                 <FormLabel htmlFor={`text-${item.id}`}>#{i + 1}</FormLabel>
-                <Textarea
+                <TextInput
                   name={`text-${item.id}`}
                   id={item.id}
                   value={item.content}
                   placeholder="what do you want to compare?"
-                  rows={2}
                   onChange={(e) => handleChange(e)}
                 />
               </div>
-              <Card className="list-item vowel-options radio-wrapper">
-                <FormLabel
-                  htmlFor="vowel"
-                  className="radio-txt"
-                >Vowel:</FormLabel>
-                <RadioButtonField
-                  name={`vowelOptions-${item.id}`}
-                  id={item.id}
-                  labelText="Yes"
-                  value="yes"
-                  checked={item.vowelOption === "yes"}
-                  onChange={(e) => handleChange(e)}
-                  className="radio-yes"
-                />
-                <RadioButtonField
-                  name={`vowelOptions-${item.id}`}
-                  id={item.id}
-                  labelText="No"
-                  value="no"
-                  checked={item.vowelOption === "no"}
-                  onChange={(e) => handleChange(e)}
-                  className="radio-no"
-                />
-                <RadioButtonField
-                  name={`vowelOptions-${item.id}`}
-                  id={item.id}
-                  labelText="Sometimes"
-                  value="sometimes"
-                  checked={item.vowelOption === "sometimes"}
-                  onChange={(e) => handleChange(e)}
-                  className="radio-stm"
-                />
-                <RadioButtonField
-                  name={`vowelOptions-${item.id}`}
-                  id={item.id}
-                  labelText="Question"
-                  value="question"
-                  checked={item.vowelOption === "question"}
-                  onChange={(e) => handleChange(e)}
-                  className="radio-qst"
-                />
-              </Card>
-              <Card className="list-item competitor-options radio-wrapper">
-                <FormLabel
-                  htmlFor="competitor"
-                  className="radio-txt"  
-                >Competitor:</FormLabel>
-                <RadioButtonField
-                  name={`competitorOptions-${item.id}`}
-                  id={item.id}
-                  labelText="Yes"
-                  value="yes"
-                  checked={item.competitorOption === "yes"}
-                  onChange={(e) => handleChange(e)}
-                  className="radio-yes"
-                />
-                <RadioButtonField
-                  name={`competitorOptions-${item.id}`}
-                  id={item.id}
-                  labelText="No"
-                  value="no"
-                  checked={item.competitorOption === "no"}
-                  onChange={(e) => handleChange(e)}
-                  className="radio-no"
-                />
-                <RadioButtonField
-                  name={`competitorOptions-${item.id}`}
-                  id={item.id}
-                  labelText="Sometimes"
-                  value="sometimes"
-                  checked={item.competitorOption === "sometimes"}
-                  onChange={(e) => handleChange(e)}
-                  className="radio-stm"
-                />
-                <RadioButtonField
-                  name={`competitorOptions-${item.id}`}
-                  id={item.id}
-                  labelText="Question"
-                  value="question"
-                  checked={item.competitorOption === "question"}
-                  onChange={(e) => handleChange(e)}
-                  className="radio-qst"
-                />
-              </Card>
+              <SelectField
+                name={`vowelOptions-${item.id}`}
+                id={item.id}
+                labelText="Vowel:"
+                onChange={(e) => handleChange(e)}
+                value={item.vowelOption}
+              >
+                <Option value="yes" >Yes</Option>
+                <Option value="no" >No</Option>
+                <Option value="sometimes" >Sometimes</Option>
+                <Option value="question" >Question</Option>
+              </SelectField>
+              <SelectField
+                name={`competitorOptions-${item.id}`}
+                id={item.id}
+                labelText="Competitor:"
+                onChange={(e) => handleChange(e)}
+                value={item.competitorOption}
+              >
+                <Option value="yes" >Yes</Option>
+                <Option value="no" >No</Option>
+                <Option value="sometimes" >Sometimes</Option>
+                <Option value="question" >Question</Option>
+              </SelectField>
               <div className="list-item btn-remove-wrapper">
                 <Button
                   buttonType="negative"
