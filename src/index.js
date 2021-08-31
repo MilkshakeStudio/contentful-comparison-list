@@ -19,7 +19,7 @@ export const App = ({sdk}) => {
     listArr: [
       {
         id: v4(),
-        text: "hi there",
+        content: "hi there",
         vowelOption: "yes",
         competitorOption: "no"
       }
@@ -76,7 +76,7 @@ export const App = ({sdk}) => {
           ...prevState.listArr,
           {
             id: v4(),
-            text: "",
+            content: "",
             vowelOption: "yes",
             competitorOption: "no"
           }
