@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { arrayMoveImmutable } from 'array-move';
 import { v4 } from 'uuid';
-import { Card, TextField, RadioButtonField, FormLabel, Button, Icon, Textarea } from '@contentful/forma-36-react-components';
+import { Card, RadioButtonField, FormLabel, Button, Icon, Textarea } from '@contentful/forma-36-react-components';
 import { init } from 'contentful-ui-extensions-sdk';
 import '@contentful/forma-36-react-components/dist/styles.css';
 import './index.css';
@@ -20,8 +20,8 @@ export const App = ({sdk}) => {
       {
         id: v4(),
         text: "hi there",
-        vowel: "yes",
-        competitor: "no"
+        vowelOption: "yes",
+        competitorOption: "no"
       }
     ]
   });
@@ -40,8 +40,8 @@ export const App = ({sdk}) => {
     for (let item of newList) {
       if (e.target.id === item.id) {
         e.target.name.includes("text") && (item.text = e.target.value)
-        e.target.name.includes("vowelOptions") && (item.vowel = e.target.value)
-        e.target.name.includes("competitorOptions") && (item.competitor = e.target.value)
+        e.target.name.includes("vowelOptions") && (item.vowelOption = e.target.value)
+        e.target.name.includes("competitorOptions") && (item.competitorOption = e.target.value)
       }
     }
     setListItems(prevState => (
@@ -77,8 +77,8 @@ export const App = ({sdk}) => {
           {
             id: v4(),
             text: "",
-            vowel: "yes",
-            competitor: "no"
+            vowelOption: "yes",
+            competitorOption: "no"
           }
         ]
       }
@@ -160,7 +160,7 @@ export const App = ({sdk}) => {
                   id={item.id}
                   labelText="Yes"
                   value="yes"
-                  checked={item.vowel === "yes"}
+                  checked={item.vowelOption === "yes"}
                   onChange={(e) => handleChange(e)}
                   className="radio-yes"
                 />
@@ -169,7 +169,7 @@ export const App = ({sdk}) => {
                   id={item.id}
                   labelText="No"
                   value="no"
-                  checked={item.vowel === "no"}
+                  checked={item.vowelOption === "no"}
                   onChange={(e) => handleChange(e)}
                   className="radio-no"
                 />
@@ -178,7 +178,7 @@ export const App = ({sdk}) => {
                   id={item.id}
                   labelText="Sometimes"
                   value="sometimes"
-                  checked={item.vowel === "sometimes"}
+                  checked={item.vowelOption === "sometimes"}
                   onChange={(e) => handleChange(e)}
                   className="radio-stm"
                 />
@@ -187,7 +187,7 @@ export const App = ({sdk}) => {
                   id={item.id}
                   labelText="Question"
                   value="question"
-                  checked={item.vowel === "question"}
+                  checked={item.vowelOption === "question"}
                   onChange={(e) => handleChange(e)}
                   className="radio-qst"
                 />
@@ -202,7 +202,7 @@ export const App = ({sdk}) => {
                   id={item.id}
                   labelText="Yes"
                   value="yes"
-                  checked={item.competitor === "yes"}
+                  checked={item.competitorOption === "yes"}
                   onChange={(e) => handleChange(e)}
                   className="radio-yes"
                 />
@@ -211,7 +211,7 @@ export const App = ({sdk}) => {
                   id={item.id}
                   labelText="No"
                   value="no"
-                  checked={item.competitor === "no"}
+                  checked={item.competitorOption === "no"}
                   onChange={(e) => handleChange(e)}
                   className="radio-no"
                 />
@@ -220,7 +220,7 @@ export const App = ({sdk}) => {
                   id={item.id}
                   labelText="Sometimes"
                   value="sometimes"
-                  checked={item.competitor === "sometimes"}
+                  checked={item.competitorOption === "sometimes"}
                   onChange={(e) => handleChange(e)}
                   className="radio-stm"
                 />
@@ -229,7 +229,7 @@ export const App = ({sdk}) => {
                   id={item.id}
                   labelText="Question"
                   value="question"
-                  checked={item.competitor === "question"}
+                  checked={item.competitorOption === "question"}
                   onChange={(e) => handleChange(e)}
                   className="radio-qst"
                 />
@@ -292,11 +292,3 @@ App.propTypes = {
 init(sdk => {
   ReactDOM.render(<App sdk={sdk} />, document.getElementById('root'));
 });
-
-/**
- * By default, iframe of the extension is fully reloaded on every save of a source file.
- * If you want to use HMR (hot module reload) instead of full reload, uncomment the following lines
- */
-// if (module.hot) {
-//   module.hot.accept();
-// }
