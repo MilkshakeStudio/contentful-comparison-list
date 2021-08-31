@@ -39,7 +39,7 @@ export const App = ({sdk}) => {
     const newList = listItems.listArr.slice()
     for (let item of newList) {
       if (e.target.id === item.id) {
-        e.target.name.includes("text") && (item.text = e.target.value)
+        e.target.name.includes("text") && (item.content = e.target.value)
         e.target.name.includes("vowelOptions") && (item.vowelOption = e.target.value)
         e.target.name.includes("competitorOptions") && (item.competitorOption = e.target.value)
       }
@@ -144,7 +144,7 @@ export const App = ({sdk}) => {
                 <Textarea
                   name={`text-${item.id}`}
                   id={item.id}
-                  value={item.text}
+                  value={item.content}
                   placeholder="what do you want to compare?"
                   rows={2}
                   onChange={(e) => handleChange(e)}
