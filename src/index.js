@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
 import { v4 } from 'uuid';
 import { Card, FormLabel, Button, Icon, TextInput, SelectField, Option } from '@contentful/forma-36-react-components';
@@ -92,13 +92,13 @@ export const App = ({sdk}) => {
     sdk.field.setValue(listItems)
   }
 
-  const handleDragEnd = (result) => {
-    const oldList = listItems.listArr.slice()
-    const newList = arrayMoveImmutable(oldList, result.source.index, result.destination.index)
+  const handleReorder = ({oldIndex, newIndex}) => {
+    const newList = listItems.listArr.slice()
+    const orderedList = arrayMoveImmutable(newList, oldIndex, newIndex)
     setListItems( prevState => (
       {
         ...prevState,
-        listArr: newList
+        listArr: orderedList
       }
     ))
     sdk.field.setValue(listItems)
@@ -109,77 +109,82 @@ export const App = ({sdk}) => {
   //  SORTABLE COMPONENT
   //===============================================================/
 
-  const sortableItem = (item, i) => {
+  const SortableItem = SortableElement(({data}) => {
     return (
-      <Draggable
-        draggableId={item.id}
-        index={i}
-        key={item.id}
+      <li 
+        key={data.id}
+        id={data.id}
       >
-        {(provided) => (
-          <li 
-            key={item.id}
-            id={item.id}
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
+        <Card
+          className="list-item-wrapper"
+        >
+          <div className="drag-icon">
+            <Icon icon="Drag" />
+          </div>
+          <div className="list-item textarea">
+            <TextInput
+              name={`text-${data.id}`}
+              id={data.id}
+              value={data.content}
+              placeholder="what do you want to compare?"
+              onBlur={(e) => handleChange(e)}
+            />
+          </div>
+          <SelectField
+            name={`vowelOptions-${data.id}`}
+            id={data.id}
+            labelText="Vowel:"
+            onChange={(e) => handleChange(e)}
+            value={data.vowelOption}
           >
-            <Card
-              className="list-item-wrapper"
-            >
-              <div className="drag-icon">
-                <Icon icon="Drag" />
-              </div>
-              <div className="list-item textarea">
-                <FormLabel htmlFor={`text-${item.id}`}>#{i + 1}</FormLabel>
-                <TextInput
-                  name={`text-${item.id}`}
-                  id={item.id}
-                  value={item.content}
-                  placeholder="what do you want to compare?"
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-              <SelectField
-                name={`vowelOptions-${item.id}`}
-                id={item.id}
-                labelText="Vowel:"
-                onChange={(e) => handleChange(e)}
-                value={item.vowelOption}
-              >
-                <Option value="yes" >Yes</Option>
-                <Option value="no" >No</Option>
-                <Option value="sometimes" >Sometimes</Option>
-                <Option value="question" >Question</Option>
-              </SelectField>
-              <SelectField
-                name={`competitorOptions-${item.id}`}
-                id={item.id}
-                labelText="Competitor:"
-                onChange={(e) => handleChange(e)}
-                value={item.competitorOption}
-              >
-                <Option value="yes" >Yes</Option>
-                <Option value="no" >No</Option>
-                <Option value="sometimes" >Sometimes</Option>
-                <Option value="question" >Question</Option>
-              </SelectField>
-              <div className="list-item btn-remove-wrapper">
-                <Button
-                  buttonType="negative"
-                  size="small"
-                  icon="HorizontalRule"
-                  id={item.id}
-                  onClick={(e) => handleDeleteItem(e)}
-                  className="btn-remove"
-                ></Button>
-              </div>
-            </Card>
-          </li>
-        )}
-      </Draggable>
+            <Option value="yes" >Yes</Option>
+            <Option value="no" >No</Option>
+            <Option value="sometimes" >Sometimes</Option>
+            <Option value="question" >Question</Option>
+          </SelectField>
+          <SelectField
+            name={`competitorOptions-${data.id}`}
+            id={data.id}
+            labelText="Competitor:"
+            onChange={(e) => handleChange(e)}
+            value={data.competitorOption}
+          >
+            <Option value="yes" >Yes</Option>
+            <Option value="no" >No</Option>
+            <Option value="sometimes" >Sometimes</Option>
+            <Option value="question" >Question</Option>
+          </SelectField>
+          <div className="list-item btn-remove-wrapper">
+            <Button
+              buttonType="negative"
+              size="small"
+              icon="HorizontalRule"
+              id={data.id}
+              onClick={(e) => handleDeleteItem(e)}
+              className="btn-remove"
+            ></Button>
+          </div>
+        </Card>
+      </li>
     )
-  }
+  })
+
+  const SortableList = SortableContainer(() => {
+    return (
+      <ul
+        className="list"
+        key="main"
+      >
+        {listItems.listArr.map((item, i) => ( 
+          <SortableItem
+            data={item}
+            key={item.id}
+            index={i}
+          />
+        ))}
+      </ul>
+    )
+  })
 
 
   //===============================================================/
@@ -187,21 +192,13 @@ export const App = ({sdk}) => {
   //===============================================================/
 
   return (
-    <DragDropContext
-      onDragEnd={handleDragEnd}
-    >
-      <Droppable droppableId="comparison-list-droppable">
-        {(provided) => (
-          <ul
-            className="list"
-            ref={provided.innerRef}
-            { ...provided.droppableProps}
-          >
-            {listItems.listArr.map((item, i) => sortableItem(item, i))}
-            {provided.placeholder}
-          </ul>
-        )}
-      </Droppable>
+    <>
+      <SortableList
+        onSortEnd={handleReorder}
+        lockAxis="y"
+        distance={15}
+        key="main"
+      />
       <div className="btn-add-wrapper">
         <Button
           buttonType="positive"
@@ -211,7 +208,7 @@ export const App = ({sdk}) => {
           className="btn-add"
         >add row</Button>
       </div>
-    </DragDropContext>
+    </>
   );
 }
 

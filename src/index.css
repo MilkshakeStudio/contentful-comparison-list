@@ -19,17 +19,17 @@ div {
 
 .list-item-wrapper {
   display: grid;
-  grid-template: auto auto auto / auto 1fr 1fr;
+  grid-template: auto auto / auto 1fr 1fr;
   grid-template-areas: 
     "drg-ico  txt       txt"
-    "drg-ico  vwl-opt   com-opt"
-    "drg-ico  .         btn-rmv";
+    "btn-rmv  vwl-opt   com-opt";
   gap: 1rem;
 }
 
 .drag-icon {
   grid-area: drg-ico;
   align-self: center;
+  cursor: pointer;
 }
 
 .textarea {
@@ -46,7 +46,7 @@ div {
 
 .btn-remove-wrapper {
   grid-area: btn-rmv;
-  justify-self: end;
+  align-self: end;
 }
 
 .btn-add-wrapper {
